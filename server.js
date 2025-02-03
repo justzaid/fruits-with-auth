@@ -21,12 +21,6 @@ mongoose.connection.on('connected', () => {
     console.log(`Connected to MongoDB Database ${mongoose.connection.name}`)
 })
 
-
-// Controllers
-const pagesCtrl = require('./controllers/pages')
-const authCtrl = require('./controllers/auth')
-const vipCtrl = require('./controllers/vip')
-
 // Middleware
 app.use(express.urlencoded({ extended: false}))
 app.use(express.static(path.join(__dirname, "public")));
@@ -44,7 +38,14 @@ app.use(session({
         secure: false,
     }
 }))
+
 app.use(passUserToView)
+
+// Controllers
+const pagesCtrl = require('./controllers/pages')
+const authCtrl = require('./controllers/auth')
+const vipCtrl = require('./controllers/vip')
+const fruitsCtrl = require('./controllers/fruits')
 
 // Route handlers
 app.get('/', pagesCtrl.home)
@@ -54,6 +55,11 @@ app.get('/auth/sign-in', authCtrl.signInForm)
 app.post('/auth/sign-in', authCtrl.signIn)
 app.get('/auth/sign-out', authCtrl.signOut)
 app.get('/vip-lounge', isSignedIn, vipCtrl.welcome)
+
+// Fruit routes
+app.get('/fruits/new', fruitsCtrl.newFruits)
+app.post('/fruits', fruitsCtrl.addFruits)
+app.get('/fruits', fruitsCtrl.index)
 
 
 app.listen(port, () => {
